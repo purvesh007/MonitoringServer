@@ -1,0 +1,55 @@
+Name: Purvesh Patel
+This piece of code is implementation of Service monitoring Class. The Service monitoring class is built with the help of multithreading in Java.
+
+Points cover in this ReadMe
+1) Introduction To The Code Structure
+2) Flow Of The Code
+3) How To Run This Code/Server
+4) Future Enhancement
+
+
+************************** INTRODUCTION TO CODE STRUCTURE **************************
+
+The Project/code (MonitoringServer) contains the following class, Functionality of each of this class is explained in brief in later portion:
+-	MonitoringServer :- Main Class
+-	Monitor :- Thread for listening on the port
+-	AssignRequest :- Handover request to another thread for request read /* IMPORTANT
+-	ReadRequest :- Assign request to respective polling frequency Queue
+-	ServiceIdentifier : - Store the service request
+-	UserQueueObject :- Store the client socket
+-	WorkerThread :- Check the status of the service and give response back to the user
+
+
+***************************   FLOW OF THE CODE *******************************
+
+Running this multithreaded server (MonitoringServer.java) file will start two threads (Monitor and AssignRequest thread’s). 
+•	Monitor thread will actively listen on the port for incoming user request for registering the service and store it in a buffer (Queue).
+•	AssignRequest thread, actively monitor this above queue and if a new request is received by the server, it will hand this request to a new thread which will process the request further.
+ AssignRequest as mentioned above will create a new thread (thread 3) called ReadRequest. This is important becuase if we do not create a new thread for every request, then a client who is not sending the request after the connecting to the server can block the whole server/resources as the program will not proced further.
+•	ReadRequest thread will read request from the user, follow by validation of the request. If the request is in the correct format then, this thread will assign the request to the respective polling frequency Queue. If there is no queue then it will create a new one. Whenever a new queue is created it will start a new thread (WorkerThread) and queue is assigned to it.
+Last thread which is WorkerThread as mentioned above
+•	WorkerThread, thread will check the status of the service and will respond back the status of the service to the corresponding user. Point to note that this server will have a new worker thread for every polling frequency.
+
+
+
+
+*****************************   HOW TO RUN THIS CODE/SERVER ***************************
+On Server
+1) If running on the server, you need to compile all java file and then run the main java file which is “MonitoringServer.java”. This will start the Monitoring server and will listen on the port 8080 which is hardcoded in the code.
+2) Now open a telnet connection to this server (telnet 127.0.0.1 8080), and when connected pass the request type in the following format:
+	“GET 	204.79.197.219     80	 5 “
+1st Argument is Request type which should be “GET”
+2nd Argument is IP address of the host a user want to check 
+3rd Argument is Port number on which the service is running
+4th Argument is polling time frequency user want to have.
+Now user will get response from the Monitoring class server whether the host is up or not after polling frequency time.
+
+On Localhost IDE:
+1st would be different in which, Import the project and run the main file. For rest follow the same step from 2nd step describe above.
+
+
+****************************** FUTURE ENHANCEMENT *************************
+Following are few things which can be added in order to improve performance and stability of this server, unfortunately due to the time constrain, I was unable to do that.
+•	Unsubscribe from the service: What if a user does not want update from the service, current implementation doesn’t handle/provide this functionality. This functionality can be added. 
+•	Updating the polling frequency: What if a user want to update his/her polling frequency. This functionality should be added. 
+•	Handling a Connection drop
